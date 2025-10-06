@@ -1,13 +1,16 @@
 <div class="d-flex flex-column justify-content-center align-items-center h-100">
   <h1>Jogo de Adivinhação</h1>
 
-  <main class="row-cols-3 d-flex align-items-center bg-danger-subtle rounded text-center p-5 mt-5">
+  <main class="row-cols-3 d-flex align-items-center rounded text-center p-5 mt-5" [ngClass]="cardClass">
     <label class="display-1">{{dicaNumeroMaiorQue}} ></label>
 
     <div class="d-flex flex-column gap-2">
       <div class="text-center">
         <div class="fw-semibold">Tentativas restantes: {{ tentativasRestantes }}</div>
         <div class="small text-muted">Intervalo: 1 a {{ maxAtual }}</div>
+        <div class="mt-2 fs-5">
+          Pontos: <span class="fw-bold">{{ pontuacao }}</span>/100
+        </div>
       </div>
 
       <input [(ngModel)]="numeroDigitado" class="display-1 text-center" type="number" [min]="1" [max]="maxAtual">
