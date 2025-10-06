@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ export class App implements OnInit {
   public numeroSecreto: number = 0;
 
   public jogoEstaFinalizado: boolean = false;
-  public mensagemAcerto: string = "🎉 Parabéns! Você acertou o número secreto!";
+  public mensagemAcerto: string | null = null;
 
   public dicaNumeroMaiorQue: number = 1;
   public dicaNumeroMenorQue: number = 100;
@@ -28,8 +29,13 @@ export class App implements OnInit {
       alert(`O número digitado '${this.numeroDigitado}' é maior que o número secreto! Tente novamente.`);
 
     else {
-      this.mensagemAcerto;
       this.jogoEstaFinalizado = true;
+
+      const modalEl = document.getElementById('modalAcerto');
+      if (!modalEl) return;
+
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
     }
   }
 

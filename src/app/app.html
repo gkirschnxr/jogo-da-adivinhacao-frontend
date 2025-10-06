@@ -10,13 +10,29 @@
         <button (click)="adivinhar()" class="btn btn-primary">Adivinhar</button>
       }
       @else {
-        <div (ngIf)="mensagemAcerto" class="popup">       
-          {{mensagemAcerto}}
-          <button (click)="reiniciar()" class="btn btn-success">Reiniciar</button>
-        </div>
+        <button (click)="reiniciar()" class="btn btn-secondary">Reiniciar</button>
       }
 
     </div>
     <label class="display-1">< {{dicaNumeroMenorQue}}</label>
   </main>
+</div>
+
+<div class="modal fade" id="modalAcerto" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">🎉 Parabéns!</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="fs-4">Você acertou o número secreto!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="reiniciar()">
+          Jogar novamente
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
