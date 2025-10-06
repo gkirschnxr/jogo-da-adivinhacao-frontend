@@ -20,6 +20,7 @@
           Adivinhar
         </button>
         <button class="btn btn-outline-secondary" (click)="reiniciar()">Trocar dificuldade</button>
+        <button class="btn btn-outline-dark" (click)="filtroRanking='todos'; abrirRanking()">Ver Ranking</button>
       </div>
     </div>
 
@@ -62,11 +63,24 @@
       </div>
       <div class="modal-body">
         <p class="fs-4">Você acertou o número secreto!</p>
+        <p class="mb-1">Pontuação final: <strong>{{ pontuacao }}</strong></p>
+        <div class="input-group mt-3">
+          <span class="input-group-text">Nome</span>
+          <input [(ngModel)]="nomeJogador" class="form-control" placeholder="Digite seu nome (opcional)">
+        </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer justify-content-between">
         <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="reiniciar()">
           Jogar novamente
         </button>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary"
+                  data-bs-dismiss="modal"
+                  (click)="registrarPontuacao(); abrirRanking()">
+            Salvar no Ranking
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -85,6 +99,81 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-danger" data-bs-dismiss="modal" (click)="reiniciar()">Tentar novamente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ranking -->
+<div class="modal fade" id="modalRanking" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">🏆 Ranking</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="btn-group" role="group" aria-label="Filtro">
+            <input type="radio" class="btn-check" id="fTodos" name="filtro" checked
+                   (change)="filtroRanking='todos'; abrirRanking()">
+            <label class="btn btn-outline-dark" for="fTodos">Todos</label>
+
+            <input type="radio" class="btn-check" id="fFacil" name="filtro"
+                   (change)="filtroRanking='facil'; abrirRanking()">
+            <label class="btn btn-outline-success" for="fFacil">Fácil</label>
+
+            <input type="radio" class="btn-check" id="fMedio" name="filtro"
+                   (change)="filtroRanking='medio'; abrirRanking()">
+            <label class="btn btn-outline-warning" for="fMedio">Médio</label>
+
+            <input type="radio" class="btn-check" id="fDificil" name="filtro"
+                   (change)="filtroRanking='dificil'; abrirRanking()">
+            <label class="btn btn-outline-danger" for="fDificil">Difícil</label>
+          </div>
+
+          <button class="btn btn-outline-danger btn-sm" (click)="limparRanking()" (click)="reiniciar()">Limpar ranking</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped align-middle text-center">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Pontos</th>
+                <th>Dificuldade</th>
+                <th>Tentativas</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of rankingAtual; index as i">
+                <td>{{ i + 1 }}</td>
+                <td>{{ r.nome }}</td>
+                <td class="fw-bold">{{ r.pontos }}</td>
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'text-bg-success': r.dificuldade === 'facil',
+                          'text-bg-warning': r.dificuldade === 'medio',
+                          'text-bg-danger': r.dificuldade === 'dificil'
+                        }">{{ r.dificuldade }}</span>
+                </td>
+                <td>{{ r.tentativasUsadas }}</td>
+                <td>{{ r.dataISO | date:'short' }}</td>
+              </tr>
+              <tr *ngIf="rankingAtual.length === 0">
+                <td colspan="6" class="text-muted py-4">Ainda não há registros.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="reiniciar()">Fechar</button>
       </div>
     </div>
   </div>

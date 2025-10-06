@@ -1,27 +1,28 @@
-import { NgClass } from '@angular/common';
+import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as bootstrap from 'bootstrap';
-
-type Dificuldade = 'facil' | 'medio' | 'dificil';
-
-const configInicial: Record<Dificuldade, {max: number, tentativas: number, titulo: string, cardClass: string}> = {
-  facil: {max: 10, tentativas: 3, titulo: "Fácil (1-10)", cardClass: "bg-success-subtle border-success"},
-  medio: {max: 50, tentativas: 5, titulo: "Médio (1-50)", cardClass: "bg-warning-subtle border-warning"},
-  dificil: {max: 100, tentativas: 7, titulo: "Difícil (1-100)", cardClass: "bg-danger-subtle border-danger"}
-}
+import { CONFIG, Dificuldade } from '../core/models/game.types';
+import { RankingService } from '../services/ranking.service';
+import { RankingItem } from '../core/models/ranking.model';
 
 @Component({
   selector: 'app-root',
-  imports: [FormsModule, NgClass],
+  standalone: true,
+  imports: [FormsModule, NgClass, NgFor, NgIf, DatePipe],
   templateUrl: './app.html'
 })
+
 export class App implements OnInit {
-  public readonly CONFIG = configInicial;
+  public readonly CONFIG = CONFIG;
 
   private readonly PONTOS_MAX = 100;
   public pontuacao = this.PONTOS_MAX;
   public cardClass = 'bg-danger-subtle border-danger';
+
+  public nomeJogador: string = '';
+  public rankingAtual: RankingItem[] = [];
+  public filtroRanking: Dificuldade | 'todos' = 'todos';
 
   public numeroDigitado: number = 1;
   public numeroSecreto: number = 0;
@@ -35,6 +36,8 @@ export class App implements OnInit {
   public dificuldadeSelecionada: Dificuldade | null = null;
   public maxAtual = 100;
   public tentativasRestantes = 0;
+
+  constructor(private ranking: RankingService) { }
 
   ngOnInit(): void {
     this.abrirModalDificuldade();
@@ -51,7 +54,7 @@ export class App implements OnInit {
   public iniciarJogo(d: Dificuldade): void {
     this.dificuldadeSelecionada = d;
 
-    const config = configInicial[d];
+    const config = CONFIG[d];
     this.maxAtual = config.max;
     this.tentativasRestantes = config.tentativas;
     this.cardClass = config.cardClass;
@@ -127,5 +130,29 @@ export class App implements OnInit {
     else if (dist >= 1) perda = 2;
 
     this.pontuacao = Math.max(0, this.pontuacao - perda);
+  }
+
+  public registrarPontuacao(): void {
+    const dif = this.dificuldadeSelecionada!;
+    const tentMax = this.CONFIG[dif].tentativas;
+    const item: RankingItem = {
+      nome: this.nomeJogador?.trim() || 'Anônimo',
+      pontos: this.pontuacao,
+      dificuldade: dif,
+      tentativasUsadas: tentMax - this.tentativasRestantes,
+      dataISO: new Date().toISOString()
+    };
+    this.ranking.add(item);
+  }
+
+  public abrirRanking(): void {
+    this.rankingAtual = this.ranking.load(this.filtroRanking);
+    const el = document.getElementById('modalRanking');
+    if (el) new bootstrap.Modal(el).show();
+  }
+
+  public limparRanking(): void {
+    this.ranking.clear();
+    this.rankingAtual = [];
   }
 }
