@@ -11,6 +11,7 @@ export class App implements OnInit {
   public numeroSecreto: number = 0;
 
   public jogoEstaFinalizado: boolean = false;
+  public mensagemAcerto: string = "🎉 Parabéns! Você acertou o número secreto!";
 
   public dicaNumeroMaiorQue: number = 1;
   public dicaNumeroMenorQue: number = 100;
@@ -21,13 +22,15 @@ export class App implements OnInit {
 
   public adivinhar(): void {
     if (this.numeroDigitado < this.numeroSecreto)
-      this.dicaNumeroMaiorQue = this.numeroDigitado;
+      alert(`O número digitado '${this.numeroDigitado}' é menor que o número secreto! Tente novamente.`);
 
     else if (this.numeroDigitado > this.numeroSecreto)
-      this.dicaNumeroMenorQue = this.numeroDigitado;
+      alert(`O número digitado '${this.numeroDigitado}' é maior que o número secreto! Tente novamente.`);
 
-    else 
+    else {
+      this.mensagemAcerto;
       this.jogoEstaFinalizado = true;
+    }
   }
 
   public reiniciar(): void {

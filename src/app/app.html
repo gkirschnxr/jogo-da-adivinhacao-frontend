@@ -10,7 +10,10 @@
         <button (click)="adivinhar()" class="btn btn-primary">Adivinhar</button>
       }
       @else {
-        <button (click)="reiniciar()" class="btn btn-success">Reiniciar</button>
+        <div (ngIf)="mensagemAcerto" class="popup">       
+          {{mensagemAcerto}}
+          <button (click)="reiniciar()" class="btn btn-success">Reiniciar</button>
+        </div>
       }
 
     </div>
