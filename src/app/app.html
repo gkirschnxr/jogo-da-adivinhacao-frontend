@@ -3,21 +3,53 @@
 
   <main class="row-cols-3 d-flex align-items-center bg-danger-subtle rounded text-center p-5 mt-5">
     <label class="display-1">{{dicaNumeroMaiorQue}} ></label>
+
     <div class="d-flex flex-column gap-2">
-      <input [(ngModel)]="numeroDigitado" class="display-1 text-center" type="number">
+      <div class="text-center">
+        <div class="fw-semibold">Tentativas restantes: {{ tentativasRestantes }}</div>
+        <div class="small text-muted">Intervalo: 1 a {{ maxAtual }}</div>
+      </div>
 
-      @if (!jogoEstaFinalizado) {
-        <button (click)="adivinhar()" class="btn btn-primary">Adivinhar</button>
-      }
-      @else {
-        <button (click)="reiniciar()" class="btn btn-secondary">Reiniciar</button>
-      }
+      <input [(ngModel)]="numeroDigitado" class="display-1 text-center" type="number" [min]="1" [max]="maxAtual">
 
+      <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-primary" (click)="adivinhar()" [disabled]="jogoEstaFinalizado || !dificuldadeSelecionada">
+          Adivinhar
+        </button>
+        <button class="btn btn-outline-secondary" (click)="reiniciar()">Trocar dificuldade</button>
+      </div>
     </div>
+
     <label class="display-1">< {{dicaNumeroMenorQue}}</label>
   </main>
 </div>
 
+<!-- Escolha da dificuldade -->
+<div class="modal fade" id="modalDificuldade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title">Escolha a dificuldade</h5>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3">Número limitado de tentativas:</p>
+        <div class="d-grid gap-2">
+          <button class="btn btn-success" (click)="iniciarJogo('facil')">
+            {{ CONFIG.facil.titulo }} — {{ CONFIG.facil.tentativas }} tentativas
+          </button>
+          <button class="btn btn-warning" (click)="iniciarJogo('medio')">
+            {{ CONFIG.medio.titulo }} — {{ CONFIG.medio.tentativas }} tentativas
+          </button>
+          <button class="btn btn-danger" (click)="iniciarJogo('dificil')">
+            {{ CONFIG.dificil.titulo }} — {{ CONFIG.dificil.tentativas }} tentativas
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Acertou -->
 <div class="modal fade" id="modalAcerto" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content text-center">
@@ -32,6 +64,24 @@
         <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="reiniciar()">
           Jogar novamente
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Errou -->
+<div class="modal fade" id="modalErro" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">😢 Fim de jogo</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body fs-5">
+        Suas tentativas acabaram. O número era <strong>{{ numeroSecreto }}</strong>.
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" data-bs-dismiss="modal" (click)="reiniciar()">Tentar novamente</button>
       </div>
     </div>
   </div>
